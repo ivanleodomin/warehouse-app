@@ -1,12 +1,14 @@
 import { IngredientData } from "../Domain/entities/Recipe";
 import MarketplaceRepository from "../Domain/repositories/marketplaceRepository";
-import IngredientsRepository from "../Domain/repositories/ingredientsRepository";
+import IngredientsRepository, { IngredientsPage } from "../Domain/repositories/ingredientsRepository";
+import PurchaseRepository, { PurchasePage } from "../Domain/repositories/purchaseRepository";
 
 export default class WarehouseService {
 
     constructor(
         private marketRepository: MarketplaceRepository,
-        private ingredientsRepository: IngredientsRepository
+        private ingredientsRepository: IngredientsRepository,
+        private purchaseingRepository: PurchaseRepository
     ) { }
 
     async validListIngredients(ingredients: IngredientData[]): Promise<boolean> {
@@ -37,7 +39,9 @@ export default class WarehouseService {
 
         const { quantitySold } = await this.marketRepository.buy(record.name)
         const newQuantity = record.quantity + quantitySold
+
         await this.ingredientsRepository.update(record.id, { quantity: newQuantity })
+        await this.purchaseingRepository.register(record, quantitySold)
 
         if (quantity <= newQuantity) {
             return isValid
@@ -46,6 +50,15 @@ export default class WarehouseService {
         isValid.available = false
 
         return isValid
+    }
+
+    getIngredients(page: number): Promise<IngredientsPage> {
+        return this.ingredientsRepository.getAll({}, page)
+    }
+
+
+    getPurchases(page: number): Promise<PurchasePage> {
+        return this.purchaseingRepository.getAll({}, page)
     }
 
 }

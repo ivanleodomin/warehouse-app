@@ -3,6 +3,8 @@ import WarehouseService from "../../../Aplication/WarehouseService";
 import { BaseController } from "./base.controller";
 import { ErrorResponse, Locals } from "../types";
 import { IngredientData } from "../../../Domain/entities/Recipe";
+import { IngredientsPage } from "../../../Domain/repositories/ingredientsRepository";
+import { PurchasePage } from "../../../Domain/repositories/purchaseRepository";
 
 
 
@@ -55,5 +57,51 @@ export default class WarehouseController extends BaseController {
         }
 
         return next()
+    }
+
+    async getIngredients(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { page } = req.params
+
+        let status: number
+        let data: IngredientsPage | ErrorResponse
+
+        try {
+            if (!page) {
+                throw new Error("page is required")
+            }
+
+            data = await this.WarehouseService.getIngredients(Number(page))
+            status = 200
+        } catch (err) {
+            data = { error: this.getError(err) }
+            status = 400
+        }
+
+        res.locals = { status, data }
+        return next()
+
+    }
+
+    async getPurchases(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const { page } = req.params
+
+        let status: number
+        let data: PurchasePage | ErrorResponse
+
+        try {
+            if (!page) {
+                throw new Error("page is required")
+            }
+
+            data = await this.WarehouseService.getPurchases(Number(page))
+            status = 200
+        } catch (err) {
+            data = { error: this.getError(err) }
+            status = 400
+        }
+
+        res.locals = { status, data }
+        return next()
+
     }
 }

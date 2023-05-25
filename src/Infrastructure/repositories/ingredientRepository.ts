@@ -1,6 +1,6 @@
-import { UpdateQuery } from "mongoose";
+import { FilterQuery, UpdateQuery } from "mongoose";
 import Ingredient from "../../Domain/entities/Ingredient";
-import IngredientsRepository from "../../Domain/repositories/ingredientsRepository";
+import IngredientsRepository, { IngredientsPage } from "../../Domain/repositories/ingredientsRepository";
 import IngredientModel from "../database/collections/Ingredients";
 
 
@@ -14,6 +14,23 @@ export default class IIngredientRepository implements IngredientsRepository {
         }
 
     }
+
+    async getAll(filter: FilterQuery<Ingredient> = {}, page: number = 1, limit: number = 10): Promise<IngredientsPage> {
+
+        const totals = await IngredientModel.countDocuments(filter)
+        const orders = await IngredientModel
+            .find(filter)
+            .skip((page - 1) * limit)
+            .limit(limit)
+
+        return {
+            records: orders,
+            totalPages: Math.ceil(totals / limit),
+            perPage: limit,
+            currentPage: page
+        }
+
+    };
 
     async update(id: string, update: UpdateQuery<Ingredient>): Promise<Ingredient | null> {
         try {

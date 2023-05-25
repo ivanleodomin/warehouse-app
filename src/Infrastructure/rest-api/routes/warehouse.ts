@@ -1,11 +1,10 @@
 import { Router } from "express";
 import { warehouseController } from "../../dependencies";
 
-const PATH = "/stock"
 const router = Router()
 
 router.post(
-    PATH + '/',
+    '/stock',
     warehouseController
         .validIngredientData
         .bind(warehouseController),
@@ -17,4 +16,23 @@ router.post(
         .bind(warehouseController)
 )
 
+router.get(
+    '/ingredients/:page',
+    warehouseController
+        .getIngredients
+        .bind(warehouseController),
+    warehouseController
+        .sendResponse
+        .bind(warehouseController)
+)
+
+router.get(
+    '/purchases/:page',
+    warehouseController
+        .getPurchases
+        .bind(warehouseController),
+    warehouseController
+        .sendResponse
+        .bind(warehouseController)
+)
 export default router
