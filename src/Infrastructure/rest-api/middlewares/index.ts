@@ -7,5 +7,6 @@
 
 import json from './express-json';
 import morgan from './morgan';
+import cors from './cors';
 
-export default [morgan, json];
+export default [cors, morgan, json];
