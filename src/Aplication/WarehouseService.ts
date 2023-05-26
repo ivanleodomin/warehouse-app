@@ -40,7 +40,9 @@ export default class WarehouseService {
         const { quantitySold } = await this.marketRepository.buy(record.name)
         const newQuantity = record.quantity + quantitySold
 
-        await this.ingredientsRepository.update(record.id, { quantity: newQuantity })
+        if(quantitySold){
+            await this.ingredientsRepository.update(record.id, { quantity: newQuantity })
+        }
         await this.purchaseingRepository.register(record, quantitySold)
 
         if (quantity <= newQuantity) {
