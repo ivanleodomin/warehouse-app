@@ -46,7 +46,7 @@ El proyecto esta estructurado siguiendo el patron de arquitectura limpia, el cua
 #### Get purchases
 
 ```http
-  GET /api/purchases/${id}
+  GET /api/purchases/${page}
 ```
 
 | Parameter | Type     | Description                       |
